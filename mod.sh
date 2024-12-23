@@ -1,7 +1,7 @@
 #!/bin/bash
 
-# 128 64     32    16       8      4     2   1
-# N   WAX   KR特写 BJ特写 CSD(HP) 作弊  BESC BES
+# 512      128   64     32    16       8      4     2   1
+# RobinMod  N   WAX   KR特写 BJ特写 CSD(HP) 作弊  BESC BES
 
 # ["UCB", "SUSATO", "WAX", "KR特写", "BJ特写", "CSD", "作弊", "BESC", "BES"]
 
@@ -29,6 +29,9 @@ URL_BESC=https://gitgud.io/Kaervek/kaervek-beeesss-community-sprite-compilation/
 URL_BESC_WAX=https://gitgud.io/GTXMEGADUDE/beeesss-wax/-/raw/ff1df29d4e737ab9af1c19532e7ebb2985b5cfb8/BEEESSS_WAX.rar
 # URL_AVATAR_BJ=https://gitgud.io/GTXMEGADUDE/double-cheeseburger/-/raw/master/Paril_BJ_BEEESSS_Addon.rar
 # URL_UCB=https://github.com/site098/mysterious/releases/download/%E9%A2%84%E5%8F%91%E5%B8%83/default.zip
+# Add by bai0012_RobinMod
+URL_DOM_ROBIN_MOD=https://github.com/ZeroRing233/Degrees-of-Lewdity-RobinMod/releases/download/0.06-beta/DomRobin.mod.zip
+
 
 EXTRACT_DIR=extract # 解压目录
 OUTPUT_DIR=output   # 输出目录
@@ -162,6 +165,25 @@ fun_check_code() {
     OUTPUT_SUFFIX=${OUTPUT_SUFFIX}-ucb
     echo 256-Complete patch Universal Combat Beautification...
   fi
+  if [ $((MOD_CODE & 512)) -ne 0 ]; then
+  echo 512-Start patch Dom Robin Mod...
+  fun_dom_robin_mod
+  OUTPUT_SUFFIX=${OUTPUT_SUFFIX}-domrobin
+  echo 512-Complete patch Dom Robin Mod!
+ fi
+}
+
+# RobinMod
+fun_dom_robin_mod() {
+  MOD_DIR="dom_robin_mod"
+  mkdir -p $MOD_DIR
+  pushd $MOD_DIR
+
+  wget -q -nc -O DomRobin.mod.zip $URL_DOM_ROBIN_MOD
+  unzip -q DomRobin.mod.zip
+
+  popd
+  cp -r $MOD_DIR/img/* $IMG_PATH/
 }
 
 # 美化
