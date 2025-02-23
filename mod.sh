@@ -74,6 +74,7 @@ fun_gen_pairs() {
 
 # ZIP
 fun_zip() {
+  GAME_PATH="$EXTRACT_DIR/game"
   unzip -q ${FILE_NAME} -d $EXTRACT_DIR
 
   fun_check_code
@@ -92,6 +93,7 @@ fun_zip() {
 
 # APK
 fun_apk() {
+  GAME_PATH="$EXTRACT_DIR/assets/www/game"
   wget -q -nc -O apktool.jar $URL_APKTOOL
   wget -q -nc -O uber-apk-signer.jar $URL_APKSIGN
 
@@ -121,6 +123,41 @@ fun_apk() {
 
   # for generate markdown table
   fun_gen_pairs
+}
+
+#robin
+fun_robin() {
+  echo "1024-Start patch RobinMod..."
+  ROBIN_TMP="robin_tmp"
+  
+  # 下载并解压mod
+  wget -q -O robin.zip "$URL_ROBINMOD"
+  unzip -q robin.zip -d "$ROBIN_TMP"
+
+  # 处理游戏脚本
+  if [ -d "$ROBIN_TMP/game" ]; then
+    echo "合并游戏脚本..."
+    cp -rv "$ROBIN_TMP/game/"* "$GAME_PATH/"
+    
+    # 特殊处理origin-replace文件
+    if [ -d "$ROBIN_TMP/game/origin-replace" ]; then
+      echo "替换原始文件..."
+      cp -rv "$ROBIN_TMP/game/origin-replace/"* "$GAME_PATH/"
+    fi
+  fi
+
+  # 处理图像资源
+  if [ -d "$ROBIN_TMP/robinModImg/img" ]; then
+    echo "合并图像资源..."
+    cp -rv "$ROBIN_TMP/robinModImg/img/"* "$IMG_PATH/"
+    
+    # 修复可能的大小写问题
+    find "$IMG_PATH" -name "*.PNG" -exec rename 's/\.PNG$/.png/' {} \;
+  fi
+
+  # 清理临时文件
+  rm -rf "$ROBIN_TMP"
+  echo "1024-Complete patch RobinMod!"
 }
 
 # 处理MOD代码
@@ -186,7 +223,7 @@ fun_check_code() {
   fi
   if [ $((MOD_CODE & 1024)) -ne 0 ]; then
   fun_robin
-  OUTPUT_SUFFIX=${OUTPUT_SUFFIX}-robin
+  OUTPUT_SUFFIX="${OUTPUT_SUFFIX}-robin"
   fi
 }
 
@@ -325,27 +362,8 @@ fun_sideview_goose() {
   cp -r $BEAUTIFY_DIR/img/* $IMG_PATH/
 }
 
-#robin
-fun_robin() {
-  echo "1024-Start patch RobinMod..."
-  ROBIN_DIR="robin_mod"
-  mkdir -p $ROBIN_DIR
-  
-  wget -q -O robin.zip $URL_ROBINMOD
-  unzip -q robin.zip -d $ROBIN_DIR
-  
-  # 特殊处理：可能需要合并img目录
-  if [ -d "$ROBIN_DIR/img" ]; then
-    cp -r $ROBIN_DIR/img/* $IMG_PATH/
-  fi
-  
-  # 特殊处理：如果有其他文件
-  if [ -d "$ROBIN_DIR/plugin" ]; then
-    cp -r $ROBIN_DIR/plugin/* $EXTRACT_DIR/plugin/
-  fi
-  
-  echo "1024-Complete patch RobinMod!"
-}
+
+
 
 # UCB
 # fun_ucb() {
