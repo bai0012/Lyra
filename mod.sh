@@ -1,6 +1,7 @@
 #!/bin/bash
 
 #[
+#     "ROBIN",  1024
 #     "GOOSE",  512
 #     "UCB",    256
 #     "SUSATO", 128
@@ -38,6 +39,8 @@ URL_APKSIGN=https://github.com/patrickfav/uber-apk-signer/releases/download/v1.3
 # URL_AVATAR_BJ=https://gitgud.io/GTXMEGADUDE/double-cheeseburger/-/raw/master/Paril_BJ_BEEESSS_Addon.rar
 # URL_UCB=https://github.com/site098/mysterious/releases/download/%E9%A2%84%E5%8F%91%E5%B8%83/default.zip
 URL_DOLP_BASE="https://gitgud.io/Frostberg/degrees-of-lewdity-plus/-/archive/master/degrees-of-lewdity-plus-master.tar.gz?path=imagepacks"
+# 在资源地址部分添加
+URL_ROBINMOD=https://github.com/ZeroRing233/Degrees-of-Lewdity-RobinMod/releases/latest/download/DomRobin.mod.zip
 
 EXTRACT_DIR=extract # 解压目录
 OUTPUT_DIR=output   # 输出目录
@@ -181,6 +184,10 @@ fun_check_code() {
     OUTPUT_SUFFIX=${OUTPUT_SUFFIX}-ucb
     echo 256-Complete patch Universal Combat Beautification...
   fi
+  if [ $((MOD_CODE & 1024)) -ne 0 ]; then
+  fun_robin
+  OUTPUT_SUFFIX=${OUTPUT_SUFFIX}-robin
+  fi
 }
 
 # 美化
@@ -318,6 +325,28 @@ fun_sideview_goose() {
   cp -r $BEAUTIFY_DIR/img/* $IMG_PATH/
 }
 
+#robin
+fun_robin() {
+  echo "1024-Start patch RobinMod..."
+  ROBIN_DIR="robin_mod"
+  mkdir -p $ROBIN_DIR
+  
+  wget -q -O robin.zip $URL_ROBINMOD
+  unzip -q robin.zip -d $ROBIN_DIR
+  
+  # 特殊处理：可能需要合并img目录
+  if [ -d "$ROBIN_DIR/img" ]; then
+    cp -r $ROBIN_DIR/img/* $IMG_PATH/
+  fi
+  
+  # 特殊处理：如果有其他文件
+  if [ -d "$ROBIN_DIR/plugin" ]; then
+    cp -r $ROBIN_DIR/plugin/* $EXTRACT_DIR/plugin/
+  fi
+  
+  echo "1024-Complete patch RobinMod!"
+}
+
 # UCB
 # fun_ucb() {
 #   DIR_UCB="ucb"
@@ -373,6 +402,7 @@ else
   echo 0-Use i18n only
   FILE_NAME=$(basename DoL*-0.$VERSION)
 fi
+
 
 case "$VERSION" in
 "zip")
